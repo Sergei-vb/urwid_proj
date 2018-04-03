@@ -6,6 +6,16 @@ import get_menu_items
 main_menu = get_menu_items.menu_items
 
 
+def back_button():
+    button = urwid.Button('Back...')
+
+    def back(button):
+        return top.back()
+
+    urwid.connect_signal(button, 'click', back)
+    return urwid.AttrMap(button, 'bg', focus_map='reversed')
+
+
 def menu_button(caption, callback):
     button = urwid.Button(caption)
     urwid.connect_signal(button, 'click', callback)
@@ -25,6 +35,7 @@ def menu(title, text, choices):
     body = [urwid.Text(title), urwid.Divider(), urwid.Text(text),
             urwid.Divider()]
     body.extend(choices)
+    body.append(back_button())
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
 
 
@@ -71,12 +82,13 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
             min_width=24, min_height=8, )
         self.box_level += 1
 
-    def keypress(self, size, key):
-        if key == 'esc' and self.box_level > 1:
+    def back(self):
+        if self.box_level > 1:
             self.original_widget = self.original_widget[0]
             self.box_level -= 1
-        else:
-            return super(CascadingBoxes, self).keypress(size, key)
+
+    def keypress(self, size, key):
+        return super(CascadingBoxes, self).keypress(size, key)
 
 
 palette = [
