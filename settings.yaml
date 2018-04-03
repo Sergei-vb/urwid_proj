@@ -3,61 +3,67 @@ exit_key: q
 
 # Here you can edit menu items and submenu items.
 menu_items:
-- name: name1
+- name: 'Test SSH Connection (check ssh to hosts)'
   script:
-  text: text1
+  text:
   items:
-  - name: name1.1
+  - name: 0.0.0.0
     script:
-    text: text1.1
-    items:
-    - name: name1.1.1
-      script:
-      text: text1.1.1
-      items:
-      - name: name1.1.1.1
-        script:
-        text: text1.1.1.1
-        items:
-        - name: name1.1.1.1.1
-          script:
-          text: text1.1.1.1.1
-          items:
-          - name: name1.1.1.1.1.1
-            script: scr1.1.1.1.1.1
-            text:
-            items:
-          - name: name1.1.1.1.1.2
-            script: scr1.1.1.1.1.2
-            text:
-            items:
-      - name: name1.1.1.2
-        script: scr1.1.1.2
-        text:
-        items:
-    - name: name1.1.2
-      script:
-      text: text1.1.2
-      items:
-      - name: name1.1.2.1
-        script: scr1.1.2.1
-        text:
-        items:
-  - name: name1.2
-    script: scr1.2
-    text:
+    text: 'default host'
     items:
 
-- name: name2
-  script: scr2
+  - name: 127.0.0.0
+    script:
+    text: 'localhost'
+    items:
+
+- name: Backup (backup all devices in /tmp/)
+  script:
   text:
   items:
 
-- name: name3
+- name: Startup Provisioning
   script:
-  text: text3
+  text:
   items:
-  - name: name3.1
-    script: scr3.1
-    text:
-    items:
+
+- name: Update Provisioning
+  script:
+  text:
+  items:
+
+- name: Troubleshooting
+  script:
+  text:
+  items:
+
+- name: Verifications
+  script:
+  text:
+  items:
+
+- name: Host Files
+  script:
+  text:
+  items:
+
+- name: Read Me
+  script:
+  text:
+  items:
+
+- name: Login Device
+  script:
+  text:
+  items:
+
+- name: Exit
+  script:
+  text:
+  items:
+
+- name: License
+  script:
+  text:
+  items:
+

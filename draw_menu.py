@@ -30,6 +30,7 @@ def sub_menu(caption, text, choices):
 
 
 def menu(title, text, choices, top_level=False):
+    text = '' if not text else text
     body = [urwid.Text(title), urwid.Divider(), urwid.Text(text),
             urwid.Divider()]
     body.extend(choices)
