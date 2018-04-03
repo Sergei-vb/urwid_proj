@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 import urwid
 
-import get_menu_items
-
-main_menu = get_menu_items.menu_items
-exit_key = get_menu_items.exit_key
+from get_menu_items import menu_items, exit_key
 
 
 def back_button():
@@ -43,12 +40,12 @@ def menu(title, text, choices, top_level=False):
 
 def item_chosen(button):
     response = urwid.Text(['You chose ', button.label, '\n'])
-    done = menu_button('Ok', run_script)
+
+    def back(button):
+        return top.back()
+
+    done = menu_button('Ok', back)
     top.open_box(urwid.Filler(urwid.Pile([response, done])))
-
-
-def run_script(button):
-    pass
 
 
 def exit_program():
@@ -67,7 +64,7 @@ def recursive(obj):
     return lst
 
 
-menu_top = menu('Main Menu', 'MAIN TEXT', recursive(main_menu), top_level=True)
+menu_top = menu('Main Menu', 'TEXT', recursive(menu_items), top_level=True)
 
 
 class CascadingBoxes(urwid.WidgetPlaceholder):
