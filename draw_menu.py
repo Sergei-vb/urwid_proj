@@ -32,11 +32,12 @@ def sub_menu(caption, text, choices):
     return menu_button([caption, '...'], open_menu)
 
 
-def menu(title, text, choices):
+def menu(title, text, choices, top_level=False):
     body = [urwid.Text(title), urwid.Divider(), urwid.Text(text),
             urwid.Divider()]
     body.extend(choices)
-    body.append(back_button())
+    if not top_level:
+        body.append(back_button())
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
 
 
@@ -66,7 +67,7 @@ def recursive(obj):
     return lst
 
 
-menu_top = menu('Main Menu', 'MAIN TEXT', recursive(main_menu))
+menu_top = menu('Main Menu', 'MAIN TEXT', recursive(main_menu), top_level=True)
 
 
 class CascadingBoxes(urwid.WidgetPlaceholder):
