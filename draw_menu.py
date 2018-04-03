@@ -41,8 +41,12 @@ def menu(title, text, choices):
 
 def item_chosen(button):
     response = urwid.Text(['You chose ', button.label, '\n'])
-    done = menu_button('Ok', exit_program)
+    done = menu_button('Ok', run_script)
     top.open_box(urwid.Filler(urwid.Pile([response, done])))
+
+
+def run_script(button):
+    pass
 
 
 def exit_program(button):
