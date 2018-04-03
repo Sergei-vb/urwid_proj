@@ -1,4 +1,7 @@
-# Here you can edit menu items and submenu items
+# Here you can set the exit key from the program.
+exit_key: q
+
+# Here you can edit menu items and submenu items.
 menu_items:
 - name: name1
   script:

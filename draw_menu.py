@@ -4,6 +4,7 @@ import urwid
 import get_menu_items
 
 main_menu = get_menu_items.menu_items
+exit_key = get_menu_items.exit_key
 
 
 def back_button():
@@ -49,7 +50,7 @@ def run_script(button):
     pass
 
 
-def exit_program(button):
+def exit_program():
     raise urwid.ExitMainLoop()
 
 
@@ -69,10 +70,15 @@ menu_top = menu('Main Menu', 'MAIN TEXT', recursive(main_menu))
 
 
 class CascadingBoxes(urwid.WidgetPlaceholder):
+    text = 'Quit - {};  '.format(exit_key) + \
+           'Move through the list - up, down;  ' + \
+           'Enter/Activate - enter'
 
     def __init__(self, box):
         super(CascadingBoxes, self).__init__(
-            urwid.AttrMap(urwid.SolidFill(' '), 'bg')
+            urwid.AttrMap(
+                urwid.Filler(urwid.Text(self.text), valign='bottom'), 'bg'
+            )
         )
         self.box_level = 0
         self.open_box(box)
@@ -82,7 +88,7 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
             urwid.AttrMap(urwid.LineBox(box), 'bg'),
             self.original_widget,
             align='center', width=('relative', 95),
-            valign='middle', height=('relative', 95),
+            valign='top', height=('relative', 95),
             min_width=24, min_height=8, )
         self.box_level += 1
 
@@ -92,6 +98,8 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
             self.box_level -= 1
 
     def keypress(self, size, key):
+        if key == exit_key:
+            exit_program()
         return super(CascadingBoxes, self).keypress(size, key)
 
 
