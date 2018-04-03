@@ -9,7 +9,7 @@ main_menu = get_menu_items.menu_items
 def menu_button(caption, callback):
     button = urwid.Button(caption)
     urwid.connect_signal(button, 'click', callback)
-    return urwid.AttrMap(button, None, focus_map='reversed')
+    return urwid.AttrMap(button, 'bg', focus_map='reversed')
 
 
 def sub_menu(caption, text, choices):
@@ -17,19 +17,20 @@ def sub_menu(caption, text, choices):
 
     def open_menu(button):
         return top.open_box(contents)
-    return menu_button([caption, u'...'], open_menu)
+
+    return menu_button([caption, '...'], open_menu)
 
 
 def menu(title, text, choices):
     body = [urwid.Text(title), urwid.Divider(), urwid.Text(text),
-                                                           urwid.Divider()]
+            urwid.Divider()]
     body.extend(choices)
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
 
 
 def item_chosen(button):
-    response = urwid.Text([u'You chose ', button.label, u'\n'])
-    done = menu_button(u'Ok', exit_program)
+    response = urwid.Text(['You chose ', button.label, '\n'])
+    done = menu_button('Ok', exit_program)
     top.open_box(urwid.Filler(urwid.Pile([response, done])))
 
 
@@ -53,24 +54,21 @@ menu_top = menu('Main Menu', 'MAIN TEXT', recursive(main_menu))
 
 
 class CascadingBoxes(urwid.WidgetPlaceholder):
-    max_box_levels = 3
 
     def __init__(self, box):
-        super(CascadingBoxes, self).__init__(urwid.SolidFill(u'/'))
+        super(CascadingBoxes, self).__init__(
+            urwid.AttrMap(urwid.SolidFill(' '), 'bg')
+        )
         self.box_level = 0
         self.open_box(box)
 
     def open_box(self, box):
         self.original_widget = urwid.Overlay(
-            urwid.LineBox(box),
+            urwid.AttrMap(urwid.LineBox(box), 'bg'),
             self.original_widget,
-            align='center', width=('relative', 80),
-            valign='middle', height=('relative', 80),
-            min_width=24, min_height=8,
-            left=self.box_level * 3,
-            right=(self.max_box_levels - self.box_level - 1) * 3,
-            top=self.box_level * 2,
-            bottom=(self.max_box_levels - self.box_level - 1) * 2)
+            align='center', width=('relative', 95),
+            valign='middle', height=('relative', 95),
+            min_width=24, min_height=8, )
         self.box_level += 1
 
     def keypress(self, size, key):
@@ -81,5 +79,9 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
             return super(CascadingBoxes, self).keypress(size, key)
 
 
+palette = [
+    ('reversed', 'standout', ''),
+    ('bg', 'bold', 'dark blue'), ]
+
 top = CascadingBoxes(menu_top)
-urwid.MainLoop(top, palette=[('reversed', 'standout', '')]).run()
+urwid.MainLoop(top, palette=palette).run()
