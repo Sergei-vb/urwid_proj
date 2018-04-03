@@ -1,0 +1,60 @@
+# Here you can edit menu items and submenu items
+menu_items:
+- name: name1
+  script:
+  text: text1
+  items:
+  - name: name1.1
+    script:
+    text: text1.1
+    items:
+    - name: name1.1.1
+      script:
+      text: text1.1.1
+      items:
+      - name: name1.1.1.1
+        script:
+        text: text1.1.1.1
+        items:
+        - name: name1.1.1.1.1
+          script:
+          text: text1.1.1.1.1
+          items:
+          - name: name1.1.1.1.1.1
+            script: scr1.1.1.1.1.1
+            text:
+            items:
+          - name: name1.1.1.1.1.2
+            script: scr1.1.1.1.1.2
+            text:
+            items:
+      - name: name1.1.1.2
+        script: scr1.1.1.2
+        text:
+        items:
+    - name: name1.1.2
+      script:
+      text: text1.1.2
+      items:
+      - name: name1.1.2.1
+        script: scr1.1.2.1
+        text:
+        items:
+  - name: name1.2
+    script: scr1.2
+    text:
+    items:
+
+- name: name2
+  script: scr2
+  text:
+  items:
+
+- name: name3
+  script:
+  text: text3
+  items:
+  - name: name3.1
+    script: scr3.1
+    text:
+    items:
