@@ -75,7 +75,7 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
     def __init__(self, box):
         super(CascadingBoxes, self).__init__(
             urwid.AttrMap(
-                urwid.Filler(urwid.Text(self.text), valign='bottom'), 'bg'
+                urwid.Filler(urwid.Text(self.text), valign='bottom'), 'bg_back'
             )
         )
         self.box_level = 0
@@ -87,7 +87,7 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
             self.original_widget,
             align='center', width=('relative', 95),
             valign='top', height=('relative', 95),
-            min_width=24, min_height=8, )
+        )
         self.box_level += 1
 
     def back(self):
@@ -103,7 +103,8 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
 
 palette = [
     ('reversed', 'standout', ''),
-    ('bg', 'bold', 'dark blue'), ]
+    ('bg', 'bold', 'dark blue'),
+    ('bg_back', 'bold', 'black'), ]
 
 top = CascadingBoxes(menu_top)
 urwid.MainLoop(top, palette=palette).run()
