@@ -5,7 +5,30 @@ exit_key: q
 menu_items:
 - name: 'Test SSH Connection (check ssh to hosts)'
   script:
-  text:
+  text: 'sample text'
+  multiple_choice: True
+  items:
+  - name: 0.0.0.0
+    script:
+    text: 'default host'
+    checkbox: True
+    items:
+
+  - name: 127.0.0.0
+    script:
+    text: 'localhost'
+    checkbox: True
+    items:
+
+  - name: dummy
+    script:
+    text: dummy
+    checkbox: False
+    items:
+
+- name: Backup (backup all devices in /tmp/)
+  script:
+  text: 'sample text 2'
   items:
   - name: 0.0.0.0
     script:
@@ -16,11 +39,6 @@ menu_items:
     script:
     text: 'localhost'
     items:
-
-- name: Backup (backup all devices in /tmp/)
-  script:
-  text:
-  items:
 
 - name: Startup Provisioning
   script:
