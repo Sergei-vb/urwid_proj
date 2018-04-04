@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import urwid
 
-from get_menu_items import menu_items, exit_key
+from get_menu_items import menu_items, exit_key, text_main_menu
 
 
 def back_button():
@@ -18,7 +18,7 @@ def apply_button():
     button = urwid.Button('Apply...')
 
     def apply(button):
-        return top.back()
+        pass
 
     urwid.connect_signal(button, 'click', apply)
     return urwid.AttrMap(button, 'bg', focus_map='reversed')
@@ -33,10 +33,10 @@ def menu_btn_group(sel_all_btn=False, back_btn=False, apply_btn=False):
     button_group = []
     if sel_all_btn:
         button_group.append(
-            urwid.AttrMap(urwid.Button('Select all'), 'bg', focus_map='reversed')
+            urwid.AttrMap(urwid.Button('Select all'), 'bg',
+                          focus_map='reversed')
         )
-    if back_btn:
-        button_group.append(back_button())
+    button_group.append(back_button())
 
     if apply_btn:
         button_group.append(apply_button())
@@ -46,7 +46,6 @@ def menu_btn_group(sel_all_btn=False, back_btn=False, apply_btn=False):
 
 def check_multiple_choice(choices):
     for c in choices:
-        print(c.__class__)
         if c.base_widget.__class__ == urwid.wimp.CheckBox:
             return True
     return False
@@ -78,7 +77,6 @@ def menu(title, text, choices, top_level=False):
     if not top_level:
         body.append(menu_btn_group(
             sel_all_btn=has_multiple_choice,
-            back_btn=True,
             apply_btn=has_multiple_choice
         ))
 
@@ -91,8 +89,12 @@ def item_chosen(button):
     def back(button):
         return top.back()
 
-    done = menu_button('Ok', back)
-    top.open_box(urwid.Filler(urwid.Pile([response, done])))
+    def apply_script(button):
+        pass
+
+    back_to_menu = menu_button('Back', back)
+    apply = menu_button('Apply', apply_script)
+    top.open_box(urwid.Filler(urwid.Pile([response, back_to_menu, apply])))
 
 
 def exit_program():
@@ -116,7 +118,8 @@ def recursive(obj):
     return lst
 
 
-menu_top = menu('Main Menu', 'TEXT', recursive(menu_items), top_level=True)
+menu_top = menu('Main Menu', text_main_menu, recursive(menu_items),
+                top_level=True)
 
 
 class CascadingBoxes(urwid.WidgetPlaceholder):

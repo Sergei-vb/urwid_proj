@@ -1,6 +1,8 @@
 # Here you can set the exit key from the program.
 exit_key: q
 
+text_main_menu: example text main menu
+
 # Here you can edit menu items and submenu items.
 menu_items:
 - name: 'Test SSH Connection (check ssh to hosts)'
