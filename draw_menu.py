@@ -14,18 +14,34 @@ def back_button():
     return urwid.AttrMap(button, 'bg', focus_map='reversed')
 
 
+def apply_button():
+    button = urwid.Button('Apply...')
+
+    def apply(button):
+        return top.back()
+
+    urwid.connect_signal(button, 'click', apply)
+    return urwid.AttrMap(button, 'bg', focus_map='reversed')
+
+
 def checkbox(caption):
     item = urwid.CheckBox(caption)
     return urwid.AttrMap(item, 'bg', focus_map='reversed')
 
 
-def multiple_choice_btn_group():
-    button_group = [
-        urwid.AttrMap(urwid.Button('Select all'), 'bg', focus_map='reversed'),
-        # urwid.Button('Deselect all'),
-        urwid.AttrMap(urwid.Button('Apply'), 'bg', focus_map='reversed'),
-    ]
-    return urwid.GridFlow(button_group, 18, 1, 1, 'center')
+def menu_btn_group(sel_all_btn=False, back_btn=False, apply_btn=False):
+    button_group = []
+    if sel_all_btn:
+        button_group.append(
+            urwid.AttrMap(urwid.Button('Select all'), 'bg', focus_map='reversed')
+        )
+    if back_btn:
+        button_group.append(back_button())
+
+    if apply_btn:
+        button_group.append(apply_button())
+
+    return urwid.GridFlow(button_group, 15, 1, 1, 'center')
 
 
 def check_multiple_choice(choices):
@@ -57,11 +73,15 @@ def menu(title, text, choices, top_level=False):
             urwid.Divider()]
     body.extend(choices)
 
-    if check_multiple_choice(choices):
-        body.append(multiple_choice_btn_group())
+    has_multiple_choice = check_multiple_choice(choices)
 
     if not top_level:
-        body.append(back_button())
+        body.append(menu_btn_group(
+            sel_all_btn=has_multiple_choice,
+            back_btn=True,
+            apply_btn=has_multiple_choice
+        ))
+
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
 
 
