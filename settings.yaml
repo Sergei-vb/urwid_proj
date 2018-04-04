@@ -8,23 +8,16 @@ menu_items:
 - name: 'Test SSH Connection (check ssh to hosts)'
   script:
   text: 'sample text'
+  checkbox: y
   items:
   - name: 0.0.0.0
     script:
     text: 'default host'
-    checkbox: True
     items:
 
   - name: 127.0.0.0
     script:
     text: 'localhost'
-    checkbox: True
-    items:
-
-  - name: not checkbox
-    script:
-    text: this is not checkbox
-    checkbox: False
     items:
 
 - name: Backup (backup all devices in /tmp/)

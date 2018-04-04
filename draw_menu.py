@@ -24,12 +24,7 @@ def apply_button():
     return urwid.AttrMap(button, 'bg', focus_map='reversed')
 
 
-def checkbox(caption):
-    item = urwid.CheckBox(caption)
-    return urwid.AttrMap(item, 'bg', focus_map='reversed')
-
-
-def menu_btn_group(sel_all_btn=False, back_btn=False, apply_btn=False):
+def menu_btn_group(sel_all_btn=False, apply_btn=False):
     button_group = []
     if sel_all_btn:
         button_group.append(
@@ -44,21 +39,14 @@ def menu_btn_group(sel_all_btn=False, back_btn=False, apply_btn=False):
     return urwid.GridFlow(button_group, 15, 1, 1, 'center')
 
 
-def check_multiple_choice(choices):
-    for c in choices:
-        if c.base_widget.__class__ == urwid.wimp.CheckBox:
-            return True
-    return False
-
-
 def menu_button(caption, callback):
     button = urwid.Button(caption)
     urwid.connect_signal(button, 'click', callback)
     return urwid.AttrMap(button, 'bg', focus_map='reversed')
 
 
-def sub_menu(caption, text, choices):
-    contents = menu(caption, text, choices)
+def sub_menu(caption, text, choices, checkbox):
+    contents = menu(caption, text, choices, checkbox)
 
     def open_menu(button):
         return top.open_box(contents)
@@ -66,18 +54,16 @@ def sub_menu(caption, text, choices):
     return menu_button([caption, '...'], open_menu)
 
 
-def menu(title, text, choices, top_level=False):
+def menu(title, text, choices, checkbox, top_level=False):
     text = '' if not text else text
     body = [urwid.Text(title), urwid.Divider(), urwid.Text(text),
             urwid.Divider()]
     body.extend(choices)
 
-    has_multiple_choice = check_multiple_choice(choices)
-
     if not top_level:
         body.append(menu_btn_group(
-            sel_all_btn=has_multiple_choice,
-            apply_btn=has_multiple_choice
+            sel_all_btn=checkbox,
+            apply_btn=checkbox
         ))
 
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
@@ -101,25 +87,33 @@ def exit_program():
     raise urwid.ExitMainLoop()
 
 
-def recursive(obj):
+def checkbox_button(caption):
+    item = urwid.CheckBox(caption)
+    return urwid.AttrMap(item, 'bg', focus_map='reversed')
+
+
+def recursive(obj, checkbox=False):
     lst = []
     if isinstance(obj, dict):
         if obj["items"] is None:
-            if obj.get("checkbox", False):
-                return checkbox(obj["name"])
+            if checkbox:
+                return checkbox_button(obj["name"])
             else:
                 return menu_button(obj["name"], item_chosen)
         else:
+            checkbox = True if obj.get("checkbox", 'n') == 'y' else False
             return sub_menu(obj["name"],
                             obj["text"],
-                            recursive(obj["items"]))
+                            recursive(obj["items"], checkbox),
+                            checkbox
+                            )
     for item in obj:
-        lst.append(recursive(item))
+        lst.append(recursive(item, checkbox))
     return lst
 
 
 menu_top = menu('Main Menu', text_main_menu, recursive(menu_items),
-                top_level=True)
+                checkbox=False, top_level=True)
 
 
 class CascadingBoxes(urwid.WidgetPlaceholder):
