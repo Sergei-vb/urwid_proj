@@ -6,7 +6,6 @@ menu_items:
 - name: 'Test SSH Connection (check ssh to hosts)'
   script:
   text: 'sample text'
-  multiple_choice: True
   items:
   - name: 0.0.0.0
     script:
@@ -20,9 +19,9 @@ menu_items:
     checkbox: True
     items:
 
-  - name: dummy
+  - name: not checkbox
     script:
-    text: dummy
+    text: this is not checkbox
     checkbox: False
     items:
 
