@@ -14,14 +14,19 @@ def back_button():
     return urwid.AttrMap(button, 'bg', focus_map='reversed')
 
 
+def checkbox(caption):
+    item = urwid.CheckBox(caption)
+    return urwid.AttrMap(item, 'bg', focus_map='reversed')
+
+
 def menu_button(caption, callback):
     button = urwid.Button(caption)
     urwid.connect_signal(button, 'click', callback)
     return urwid.AttrMap(button, 'bg', focus_map='reversed')
 
 
-def sub_menu(caption, text, choices):
-    contents = menu(caption, text, choices)
+def sub_menu(caption, text, choices, multiple_choice=False):
+    contents = menu(caption, text, choices, multiple_choice=multiple_choice)
 
     def open_menu(button):
         return top.open_box(contents)
@@ -29,11 +34,12 @@ def sub_menu(caption, text, choices):
     return menu_button([caption, '...'], open_menu)
 
 
-def menu(title, text, choices, top_level=False):
+def menu(title, text, choices, top_level=False, multiple_choice=False):
     text = '' if not text else text
     body = [urwid.Text(title), urwid.Divider(), urwid.Text(text),
             urwid.Divider()]
     body.extend(choices)
+
     if not top_level:
         body.append(back_button())
     return urwid.ListBox(urwid.SimpleFocusListWalker(body))
@@ -57,9 +63,15 @@ def recursive(obj):
     lst = []
     if isinstance(obj, dict):
         if obj["items"] is None:
-            return menu_button(obj["name"], item_chosen)
+            if obj.get("checkbox", False):
+                return checkbox(obj["name"])
+            else:
+                return menu_button(obj["name"], item_chosen)
         else:
-            return sub_menu(obj["name"], obj["text"], recursive(obj["items"]))
+            return sub_menu(obj["name"],
+                            obj["text"],
+                            recursive(obj["items"]),
+                            multiple_choice=obj.get("multiple_choice", False))
     for item in obj:
         lst.append(recursive(item))
     return lst
