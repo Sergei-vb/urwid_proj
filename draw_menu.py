@@ -19,14 +19,31 @@ def checkbox(caption):
     return urwid.AttrMap(item, 'bg', focus_map='reversed')
 
 
+def multiple_choice_btn_group():
+    button_group = [
+        urwid.AttrMap(urwid.Button('Select all'), 'bg', focus_map='reversed'),
+        # urwid.Button('Deselect all'),
+        urwid.AttrMap(urwid.Button('Apply'), 'bg', focus_map='reversed'),
+    ]
+    return urwid.GridFlow(button_group, 18, 1, 1, 'center')
+
+
+def check_multiple_choice(choices):
+    for c in choices:
+        print(c.__class__)
+        if c.base_widget.__class__ == urwid.wimp.CheckBox:
+            return True
+    return False
+
+
 def menu_button(caption, callback):
     button = urwid.Button(caption)
     urwid.connect_signal(button, 'click', callback)
     return urwid.AttrMap(button, 'bg', focus_map='reversed')
 
 
-def sub_menu(caption, text, choices, multiple_choice=False):
-    contents = menu(caption, text, choices, multiple_choice=multiple_choice)
+def sub_menu(caption, text, choices):
+    contents = menu(caption, text, choices)
 
     def open_menu(button):
         return top.open_box(contents)
@@ -34,11 +51,14 @@ def sub_menu(caption, text, choices, multiple_choice=False):
     return menu_button([caption, '...'], open_menu)
 
 
-def menu(title, text, choices, top_level=False, multiple_choice=False):
+def menu(title, text, choices, top_level=False):
     text = '' if not text else text
     body = [urwid.Text(title), urwid.Divider(), urwid.Text(text),
             urwid.Divider()]
     body.extend(choices)
+
+    if check_multiple_choice(choices):
+        body.append(multiple_choice_btn_group())
 
     if not top_level:
         body.append(back_button())
@@ -70,8 +90,7 @@ def recursive(obj):
         else:
             return sub_menu(obj["name"],
                             obj["text"],
-                            recursive(obj["items"]),
-                            multiple_choice=obj.get("multiple_choice", False))
+                            recursive(obj["items"]))
     for item in obj:
         lst.append(recursive(item))
     return lst
