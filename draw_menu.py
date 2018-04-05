@@ -74,6 +74,8 @@ def menu(title, text, choices, checkbox, top_level=False):
 
     menu_obj = urwid.ListBox(urwid.SimpleFocusListWalker(body))
     menu_obj.checkbox = checkbox
+    if checkbox:
+        menu_obj.checkbox_group = choices
 
     return menu_obj
 
@@ -150,8 +152,12 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
         self.open_box(box)
 
     def open_box(self, box):
-        self.parameters = []
-        self.script = ''
+        self.script = getattr(box, 'script', '')
+        if getattr(box, 'checkbox', False):
+            self.clear_checkboxes(box)  # 'parameters' -> [] automatically
+        else:
+            self.parameters = []
+
         self.original_widget = urwid.Overlay(
             urwid.AttrMap(urwid.LineBox(box), 'bg'),
             self.original_widget,
@@ -159,7 +165,6 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
             valign='top', height=('relative', 95),
         )
         self.box_level += 1
-        self.script = getattr(box, 'script', '')
 
     def back(self):
         if self.box_level > 1:
@@ -178,6 +183,13 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
                 self.parameters.remove(value)
             finally:
                 pass
+
+    def clear_checkboxes(self, box):
+        items = getattr(box, 'checkbox_group', False)
+        if items:
+            for i in items:
+                if i.state:
+                    i.set_state(False)
 
     def keypress(self, size, key):
         if key == exit_key:
