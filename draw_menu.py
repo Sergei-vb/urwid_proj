@@ -24,13 +24,17 @@ def apply_button():
     return urwid.AttrMap(button, 'bg', focus_map='reversed')
 
 
-def menu_btn_group(sel_all_btn=False, apply_btn=False):
+def menu_btn_group(choices_checkbox, sel_all_btn=False, apply_btn=False):
     button_group = []
     if sel_all_btn:
-        button_group.append(
-            urwid.AttrMap(urwid.Button('Select all'), 'bg',
-                          focus_map='reversed')
-        )
+        button = urwid.Button('Select all')
+
+        def select_all(button):
+            return [i.toggle_state() for i in choices_checkbox]
+
+        urwid.connect_signal(button, 'click', select_all)
+        button_group.append(urwid.AttrMap(button, 'bg', focus_map='reversed'))
+
     button_group.append(back_button())
 
     if apply_btn:
@@ -62,6 +66,7 @@ def menu(title, text, choices, checkbox, top_level=False):
 
     if not top_level:
         body.append(menu_btn_group(
+            choices_checkbox=choices,
             sel_all_btn=checkbox,
             apply_btn=checkbox
         ))
@@ -89,7 +94,8 @@ def exit_program():
 
 def checkbox_button(caption):
     item = urwid.CheckBox(caption)
-    return urwid.AttrMap(item, 'bg', focus_map='reversed')
+    # return urwid.AttrMap(item, 'bg', focus_map='reversed')
+    return item
 
 
 def recursive(obj, checkbox=False):
