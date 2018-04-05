@@ -6,7 +6,7 @@ text_main_menu: example text main menu
 # Here you can edit menu items and submenu items.
 menu_items:
 - name: 'Test SSH Connection (check ssh to hosts)'
-  script:
+  script: 'echo'
   text: 'sample text'
   checkbox: y
   items:
@@ -35,7 +35,7 @@ menu_items:
     items:
 
 - name: Startup Provisioning
-  script:
+  script: 'sample script'
   text:
   items:
 
