@@ -18,7 +18,7 @@ def apply_button():
     button = urwid.Button('Apply...')
 
     def apply(button):
-        pass
+        return top.apply_script()
 
     urwid.connect_signal(button, 'click', apply)
     return urwid.AttrMap(button, 'bg', focus_map='reversed')
@@ -43,14 +43,15 @@ def menu_btn_group(choices_checkbox, sel_all_btn=False, apply_btn=False):
     return urwid.GridFlow(button_group, 15, 1, 1, 'center')
 
 
-def menu_button(caption, callback):
+def menu_button(caption, callback, script=""):
     button = urwid.Button(caption)
-    urwid.connect_signal(button, 'click', callback)
+    urwid.connect_signal(button, 'click', callback, script if script else None)
     return urwid.AttrMap(button, 'bg', focus_map='reversed')
 
 
-def sub_menu(caption, text, choices, checkbox):
+def sub_menu(caption, text, choices, checkbox, script):
     contents = menu(caption, text, choices, checkbox)
+    contents.script = script
 
     def open_menu(button):
         return top.open_box(contents)
@@ -71,21 +72,26 @@ def menu(title, text, choices, checkbox, top_level=False):
             apply_btn=checkbox
         ))
 
-    return urwid.ListBox(urwid.SimpleFocusListWalker(body))
+    menu_obj = urwid.ListBox(urwid.SimpleFocusListWalker(body))
+    menu_obj.checkbox = checkbox
+
+    return menu_obj
 
 
-def item_chosen(button):
+def item_chosen(button, script=""):
     response = urwid.Text(['You chose ', button.label, '\n'])
 
     def back(button):
         return top.back()
 
     def apply_script(button):
-        pass
+        return top.apply_script()
 
     back_to_menu = menu_button('Back', back)
     apply = menu_button('Apply', apply_script)
-    top.open_box(urwid.Filler(urwid.Pile([response, back_to_menu, apply])))
+    box = urwid.Filler(urwid.Pile([response, back_to_menu, apply]))
+    box.script = script
+    top.open_box(box)
 
 
 def exit_program():
@@ -93,9 +99,14 @@ def exit_program():
 
 
 def checkbox_button(caption):
+    def check(button, new_state, value):
+        return top.checkbox_changed(value, new_state)
+
     item = urwid.CheckBox(caption)
-    # return urwid.AttrMap(item, 'bg', focus_map='reversed')
+    urwid.connect_signal(item, 'change', check, caption)
+
     return item
+    # return urwid.AttrMap(item, 'bg', focus_map='reversed')
 
 
 def recursive(obj, checkbox=False):
@@ -105,14 +116,14 @@ def recursive(obj, checkbox=False):
             if checkbox:
                 return checkbox_button(obj["name"])
             else:
-                return menu_button(obj["name"], item_chosen)
+                return menu_button(obj["name"], item_chosen, obj["script"])
         else:
             checkbox = True if obj.get("checkbox", 'n') == 'y' else False
             return sub_menu(obj["name"],
                             obj["text"],
                             recursive(obj["items"], checkbox),
-                            checkbox
-                            )
+                            checkbox,
+                            obj["script"])
     for item in obj:
         lst.append(recursive(item, checkbox))
     return lst
@@ -134,9 +145,13 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
             )
         )
         self.box_level = 0
+        self.parameters = []
+        self.script = ''
         self.open_box(box)
 
     def open_box(self, box):
+        self.parameters = []
+        self.script = ''
         self.original_widget = urwid.Overlay(
             urwid.AttrMap(urwid.LineBox(box), 'bg'),
             self.original_widget,
@@ -144,11 +159,25 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
             valign='top', height=('relative', 95),
         )
         self.box_level += 1
+        self.script = getattr(box, 'script', '')
 
     def back(self):
         if self.box_level > 1:
             self.original_widget = self.original_widget[0]
             self.box_level -= 1
+
+    def apply_script(self):
+        print("Script string: {} {}".format(self.script,
+                                                ' '.join(str(val) for val in self.parameters)))
+
+    def checkbox_changed(self, value, state):
+        if state:
+            self.parameters.append(value)
+        else:
+            try:
+                self.parameters.remove(value)
+            finally:
+                pass
 
     def keypress(self, size, key):
         if key == exit_key:
