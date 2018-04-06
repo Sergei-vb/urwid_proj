@@ -203,9 +203,7 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
     def clear_checkboxes(self, box):
         items = getattr(box, 'checkbox_group', False)
         if items:
-            for i in items:
-                if i.state:
-                    i.set_state(False)
+            [i.set_state(False) for i in items if i.state]
 
     def keypress(self, size, key):
         if key == exit_key:
