@@ -30,7 +30,7 @@ def menu_btn_group(choices_checkbox, sel_all_btn=False, apply_btn=False):
         button = urwid.Button('Select all')
 
         def select_all(button):
-            return [i.toggle_state() for i in choices_checkbox]
+            [i.set_state(True) for i in choices_checkbox if not i.state]
 
         urwid.connect_signal(button, 'click', select_all)
         button_group.append(urwid.AttrMap(button, 'bg', focus_map='reversed'))
