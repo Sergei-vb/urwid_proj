@@ -96,6 +96,22 @@ def item_chosen(button, script=""):
     top.open_box(box)
 
 
+def exit_confirmation():
+    response = urwid.Text(['Do you really want to leave?'])
+
+    def back(button):
+        return top.back()
+
+    def really_exit(button):
+        return exit_program()
+
+    apply = menu_button('OK', really_exit)
+    back_to_menu = menu_button('Back', back)
+    box = urwid.Filler(urwid.Pile([response, urwid.Divider(), apply,
+                                   back_to_menu]))
+    top.open_box(box)
+
+
 def exit_program():
     raise urwid.ExitMainLoop()
 
@@ -193,7 +209,7 @@ class CascadingBoxes(urwid.WidgetPlaceholder):
 
     def keypress(self, size, key):
         if key == exit_key:
-            exit_program()
+            exit_confirmation()
         return super(CascadingBoxes, self).keypress(size, key)
 
 
